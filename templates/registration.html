@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Registration Form</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Roboto', sans-serif;
+        }
+        body {
+            background-color: #1a1a2e;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: #fff;
+        }
+        .registration-form {
+            background-color: #fff;
+            color: #000;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+            width: 300px;
+        }
+        .registration-form h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .registration-form .form-group {
+            margin-bottom: 15px;
+        }
+        .registration-form .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .registration-form .form-group input,
+        .registration-form .form-group select {
+            width: 100%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        .registration-form button {
+            width: 100%;
+            padding: 10px;
+            border-radius: 5px;
+            border: none;
+            background-color: #4b7bec;
+            color: #fff;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="registration-form">
+        <h2>Registration</h2>
+        <form action="{% url 'register' %}" method="post">  <!-- Correct URL for Django view -->
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="name">Name</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            <div class="form-group">
+                <label for="mobile">Mobile Number</label>
+                <input type="tel" id="mobile" name="mobile" pattern="[0-9]{10}" required>
+            </div>
+            <div class="form-group">
+                <label for="Course">Course</label>
+                <select class="form-control" id="Course" name="Course">
+                    <option value="Robotics Foundation Courses">Robotics Foundation Courses</option>
+                    <option value="CyberSecurity and Ethical Hacking">CyberSecurity and Ethical Hacking</option>
+                    <option value="Android App Devepopment">Android App Devepopment</option>
+                    <option value="Full Stack Development">Full Stack Development</option>
+                    <option value="Core Java Programming">Core Java Programming</option>
+                    <option value="Python and machine learning Basic Application">Python and machine learning Basic Application</option>
+                    <option value="Digital Marketing">Digital Marketing</option>
+                    <option value="Embedded Systems and Internet of Things">Embedded Systems and Internet of Things</option>
+                    <option value="Financial Modeling and Valuation">Financial Modeling and Valuation</option>
+                    <option value="SQL and Microsoft BI Tools including PowerBI">SQL and Microsoft BI Tools including PowerBI</option>
+                    <option value="Data Science and Data Analytics- Basic Applications">Data Science and Data Analytics- Basic Applications</option>
+                    <option value="PCB Designing">12.	PCB Designing</option>
+                </select>
+            </div>
+            <button type="submit">Register</button>
+        </form>
+    </div>
+</body>
+</html>

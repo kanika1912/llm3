@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="utf-8">
+    <title>Chatbot</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Roboto', sans-serif;
+        }
+        body {
+            background-color: #1a1a2e;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: #fff;
+            position: relative;
+        }
+        .chatbot {
+            background-color: #0f0f20;
+            border-radius: 5px;
+            border: 1px solid #fff;
+            width: 450px;
+            height: 500px;
+            display: none; /* Initially hidden */
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+        .chatbot header {
+            background-color: #0f0f20;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-bottom: 1px solid #fff;
+        }
+        .chatbot header img {
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+        .chatbot header h2 {
+            font-size: 1.2rem;
+            text-align: center;
+        }
+        .chatbox {
+            background-color: #fff;
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+        }
+        .chat {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+        .chat img {
+            height: 35px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+        .chat p {
+            background-color: #e4e6eb;
+            color: #000;
+            padding: 10px 15px;
+            border-radius: 10px;
+            max-width: 70%;
+            word-wrap: break-word;
+        }
+        .chat.outgoing p {
+            background-color: #4b7bec;
+            color: #fff;
+            margin-left: auto;
+            border-radius: 10px 10px 0 10px;
+        }
+        .chat-input {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-top: 1px solid #ccc;
+        }
+        .chat-input textarea {
+            flex: 1;
+            height: 40px;
+            border: none;
+            border-radius: 20px;
+            padding: 10px;
+            font-size: 1rem;
+            resize: none;
+            margin-right: 10px;
+        }
+        .chat-input button {
+            background-color: #4b7bec;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+        .chat-input button span {
+            color: #fff;
+            font-size: 1.2rem;
+        }
+        .thinking {
+            font-style: italic;
+            color: #888;
+        }
+        .chatbot-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #4b7bec;
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 1001;
+        }
+    </style>
+</head>
+<body>
+    <div class="chatbot" id="chatbot">
+        <header>
+            <img src="/static/suretrust.png" alt="Sure Trust">
+            <h2>Sure Trust</h2>
+        </header>
+        <div class="chatbox" id="chatbox">
+            <div class="chat incoming">
+                <img src="/static/suretrust.png" alt="">
+                <p>Welcome! Do you want to make an inquiry or register?</p>
+            </div>
+        </div>
+        <div class="chat-input">
+            <textarea id="input" placeholder="Enter a message..." required></textarea>
+            <button onclick="sendMessage()">
+                <span class="fa-regular fa-paper-plane"></span>
+            </button>
+        </div>
+    </div>
+
+    <button class="chatbot-toggle" id="chatbot-toggle">
+        <span class="fa-regular fa-comment-dots"></span>
+    </button>
+
+    <script>
+        let initialMessage = true;
+        const chatbot = document.getElementById('chatbot');
+        const chatbotToggle = document.getElementById('chatbot-toggle');
+
+        chatbotToggle.addEventListener('click', () => {
+            chatbot.style.display = chatbot.style.display === 'none' ? 'flex' : 'none';
+            chatbotToggle.style.bottom = chatbot.style.display === 'none' ? '20px' : '370px'; // Adjust position
+        });
+
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('input');
+            const message = input.value.trim();
+            if (!message) return;
+
+            const chatbox = document.getElementById('chatbox');
+
+            // Append user message to chatbox
+            const userMessage = document.createElement('div');
+            userMessage.className = 'chat outgoing';
+            userMessage.innerHTML = `<p>${message}</p>`;
+            chatbox.appendChild(userMessage);
+            input.value = '';
+
+            // Check for initial message response
+            if (initialMessage) {
+                initialMessage = false;
+                if (message.toLowerCase().includes('register')) {
+                    window.location.href = '{% url 'register' %}';  // Correct URL for Django view
+                    return;
+                }
+            }
+
+            // Append "thinking..." message to chatbox
+            const thinkingMessage = document.createElement('div');
+            thinkingMessage.className = 'chat incoming thinking';
+            thinkingMessage.innerHTML = `<img src="/static/suretrust.png" alt=""><p>Processing your request, please wait a moment.</p>`;
+            chatbox.appendChild(thinkingMessage);
+            chatbox.scrollTop = chatbox.scrollHeight;
+
+            const csrftoken = getCookie('csrftoken');
+
+            // Send message to backend
+            fetch('/submit_message/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrftoken
+                },
+                body: JSON.stringify({ input: message })
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Replace "thinking..." message with bot response
+                chatbox.removeChild(thinkingMessage);
+
+                const botMessage = document.createElement('div');
+                botMessage.className = 'chat incoming';
+                botMessage.innerHTML = `<img src="/static/suretrust.png" alt=""><p>${data.response}</p>`;
+                chatbox.appendChild(botMessage);
+                chatbox.scrollTop = chatbox.scrollHeight;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred. Please try again.');
+            });
+        }
+    </script>
+</body>
+</html>
+
+
+
+
